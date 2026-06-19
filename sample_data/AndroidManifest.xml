@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sample decompiled manifest for demonstrating apk_triage.py.
+  Permission profile mimics a typical overlay/SMS-stealer pattern.
+  Not a real application. Safe to share.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.flashlight.pro">
+
+    <!-- Old minSdk: installs onto Android versions missing modern mitigations. -->
+    <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="29" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Hardware marked optional so the app installs even on devices without it:
+         a Play Store filtering bypass that widens the attack surface. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+
+    <!-- Hardening anti-patterns: backup leaves data adb-extractable, and
+         cleartext traffic permits plain HTTP (MITM exposure). -->
+    <application android:label="Flashlight Pro"
+        android:allowBackup="true"
+        android:usesCleartextTraffic="true">
+        <!-- singleTask launchMode: task-hijacking / overlay (StrandHogg) surface. -->
+        <activity android:name=".MainActivity" android:exported="true"
+            android:launchMode="singleTask" />
+        <service android:name=".SmsRelayService" android:exported="true" />
+        <receiver android:name=".BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <!-- Exported with no permission guard: any app on the device can query it. -->
+        <provider
+            android:name=".AppDataProvider"
+            android:authorities="com.example.flashlight.pro.data"
+            android:exported="true" />
+    </application>
+</manifest>

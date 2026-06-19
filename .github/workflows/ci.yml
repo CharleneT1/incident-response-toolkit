@@ -1,0 +1,36 @@
+name: CI
+
+# A small "SOAR-adjacent" pipeline: every push runs the toolkit's tests and
+# then exercises the tools against bundled sample data as a smoke test.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Smoke test - APK triage on sample manifest
+        run: python apk_triage.py -f sample_data/AndroidManifest.xml -o /tmp/triage.json
+
+      - name: Smoke test - IOC extractor
+        run: |
+          echo "c2 203.0.113.42 http://evil.xyz/x hash d41d8cd98f00b204e9800998ecf8427e" \
+            | python ioc_extractor.py --stdin
