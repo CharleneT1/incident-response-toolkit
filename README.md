@@ -115,7 +115,7 @@ python phishing_analyzer.py -f alert.eml -o report.json
 
 ### APK Triage
 
-Static first-look triage to decide whether an Android app is worth a full reverse-engineering pass. Works on a real `.apk` (parses the binary `AndroidManifest.xml` with a self-contained AXML parser — no external dependency) **and** on the plaintext manifests that decompilers like jadx/apktool produce.
+Static first-look triage to decide whether an Android app is worth a full reverse-engineering pass. Works on a real `.apk` (parses the binary `AndroidManifest.xml` with a self-contained AXML parser — no external dependency) **and** on the plaintext manifests that decompilers like jadx/apktool produce. Dangerous permissions map to MITRE ATT&CK Mobile; hardening flags map to OWASP MASVS/MASTG.
 
 Triage a packaged app, save the report, and export embedded IOCs as a MISP event:
 
