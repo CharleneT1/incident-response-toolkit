@@ -2,7 +2,7 @@
 
 A lightweight, dependency-light Python toolkit for first-responder tasks during security incidents: IOC extraction and handling, phishing header analysis, static Android app triage, and a structured NIST-aligned response checklist.
 
-The design deliberately favours the [MISP](https://www.misp-project.org/) / [CERT-EU](https://cert.europa.eu/) ecosystem — IOCs come out in MISP event format, and indicators map to [MITRE ATT&CK](https://attack.mitre.org) where possible, so output drops straight into the platforms analysts already use rather than yet another bespoke format.
+IOCs are exported in [MISP](https://www.misp-project.org/) event format and indicators map to [MITRE ATT&CK](https://attack.mitre.org) where possible, so output slots into standard IR workflows without conversion.
 
 The APK triage tool grew out of a team Android malware / mobile-security project. The detectors are validated against a trojaned version of the open-source BoomingMusic player — the team injected 11 distinct attacks into an existing real-world app rather than writing one from scratch, which makes for a more realistic test than a toy sample (see the APK Triage section for the full attack-by-attack scorecard).
 
@@ -193,7 +193,7 @@ This is **not** a MobSF / androguard / quark-engine replacement. It's the fast, 
 > | Resource exhaustion | ⚠️ partial | `WAKE_LOCK` permission flagged; CPU/GPS/network abuse is runtime-only |
 > | Hidden analytics logging | ❌ missed | Covert write to `/files/.cache/.analytics/` is a pure runtime behaviour — the path did not appear as a plaintext DEX string, and no manifest attribute declares it |
 >
-> **8 of 11** attacks fully or substantially detected; **2 of 11** partially (the exported attack surface is visible, the runtime abuse of it is not); **1 of 11** not detected. The missed attack is the designed blind spot: a runtime file-write with no manifest declaration and no surviv-able plaintext string is exactly what the dynamic pass is for. The two partial detections are correct capability flags — the tool correctly identifies the permissions and unguarded receivers, just not the specific runtime pattern of abuse.
+> **8 of 11** attacks fully or substantially detected; **2 of 11** partially (the exported attack surface is visible, the runtime abuse of it is not); **1 of 11** not detected. The missed attack is the designed blind spot: a runtime file-write with no manifest declaration and no survivable plaintext string is exactly what the dynamic pass is for. The two partial detections are correct capability flags — the tool correctly identifies the permissions and unguarded receivers, just not the specific runtime pattern of abuse.
 
 ---
 
@@ -229,7 +229,6 @@ Every push runs the same tests plus a sample-data smoke test via GitHub Actions 
 ## Further reading
 
 - [MISP Threat Intelligence Platform](https://www.misp-project.org/documentation/)
-- [CERT-EU](https://cert.europa.eu/)
 - [MITRE ATT&CK for Mobile](https://attack.mitre.org/matrices/mobile/)
 - [NIST SP 800-61r2 — Computer Security Incident Handling Guide](https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final)
 - [MITRE ATT&CK Framework](https://attack.mitre.org)
